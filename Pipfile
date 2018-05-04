@@ -6,7 +6,8 @@ name = "pypi"
 
 
 [packages]
-
+aiohttp = "*"
+"async_timeout" = "*"
 "bs4" = "*"
 pylint = "*"
 ipython = "*"
