@@ -5,6 +5,7 @@ Implemented using async Producer/Consumer paradigm.
 """
 import asyncio
 import os
+import sys
 
 import aiohttp
 import async_timeout
@@ -44,7 +45,7 @@ async def file_fetcher():
         print('Queue is empty - Bye!')
 
 
-async def process_year(year):
+async def process_year(year, outdir):
     print('Crawling year {}'.format(year))
     async with aiohttp.ClientSession() as session:
         html = await fetch_url(session, ROOT_URL + str(year))
@@ -54,14 +55,14 @@ async def process_year(year):
             href = link.get('href', '')
             if href.endswith('.zip'):
                 url = ROOT_URL + str(year) + '/' + href
-                fname = os.path.join(ROOT_STORAGE, url.split('/')[-1])
+                fname = os.path.join(outdir, url.split('/')[-1])
                 if not os.path.exists(fname):
                     await Q_CRAWL.put((url, fname))
 
 
-def main(year=None):
+def main(year=None, outdir='uspto-data'):
     loop = asyncio.get_event_loop()
-    tasks = [loop.create_task(process_year(year))]
+    tasks = [loop.create_task(process_year(year, outdir))]
     loop.run_until_complete(asyncio.wait(tasks))
     tasks2 = [loop.create_task(file_fetcher()) for _ in range(5)]
     loop.run_until_complete(asyncio.wait(tasks2))
@@ -69,4 +70,4 @@ def main(year=None):
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1], sys.argv[2])
