@@ -12,7 +12,6 @@ import async_timeout
 from bs4 import BeautifulSoup
 
 
-ROOT_STORAGE = '/data/datasets/patents/'
 ROOT_URL = 'https://bulkdata.uspto.gov/data/patent/grant/redbook/fulltext/'
 
 CHUNK_SIZE = 1 * 1024 * 1024
